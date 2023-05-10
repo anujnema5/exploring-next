@@ -1,17 +1,19 @@
 import { connectDB } from "@/utils/database";
+import Product from "@/utils/model";
 
 export default async function handler(req, res) {
-    const products = [{
-        name: "MacBook Pro",
-        price: 120000,
-        category: "Laptop"
-    },
-    {
-        name: "Xiaomi note 10pro",
-        price: 20000,
-        category: "Mobile Phones"
+    // res.status(200).json({Success : true, msg : "Hey"})
+    if (req.method !== "GET") {
+        res.status(400).send({ Message: "Please use GET Method" })
     }
-    ];
 
-    res.status(200).json({ success: true, products });
+    try {
+        await connectDB();
+        const products = await Product.find();
+        res.status(200).json({Success : true, msg : products})
+    }
+
+    catch (err) {
+        res.status(401).send(err)
+    }
 }
